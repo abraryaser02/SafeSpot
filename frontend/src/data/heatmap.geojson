@@ -1,0 +1,677 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90017",
+                "count": 7
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.261,
+                    34.051
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90012",
+                "count": 9
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.237,
+                    34.059
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90015",
+                "count": 6
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.263,
+                    34.039
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90014",
+                "count": 7
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.255,
+                    34.042
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90021",
+                "count": 6
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.241,
+                    34.03
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90013",
+                "count": 6
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.244,
+                    34.045
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90007",
+                "count": 7
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.283,
+                    34.028
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90006",
+                "count": 10
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.291,
+                    34.047
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90005",
+                "count": 8
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.308,
+                    34.059
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90004",
+                "count": 5
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.312,
+                    34.076
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90010",
+                "count": 7
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.309,
+                    34.062
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90020",
+                "count": 8
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.309,
+                    34.066
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90028",
+                "count": 9
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.321,
+                    34.1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90038",
+                "count": 7
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.324,
+                    34.092
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90068",
+                "count": 5
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.328,
+                    34.122
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90024",
+                "count": 6
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.447,
+                    34.066
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90025",
+                "count": 6
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.446,
+                    34.044
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90049",
+                "count": 6
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.488,
+                    34.066
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90401",
+                "count": 4
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.491,
+                    34.017
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90402",
+                "count": 4
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.506,
+                    34.03
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90403",
+                "count": 3
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.492,
+                    34.028
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90404",
+                "count": 5
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.476,
+                    34.026
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90405",
+                "count": 3
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.468,
+                    34.011
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90802",
+                "count": 3
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.192,
+                    33.767
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90803",
+                "count": 3
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.137,
+                    33.758
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90804",
+                "count": 5
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.157,
+                    33.783
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90805",
+                "count": 5
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.185,
+                    33.864
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90806",
+                "count": 4
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.188,
+                    33.804
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90807",
+                "count": 2
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.185,
+                    33.844
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91101",
+                "count": 3
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.144,
+                    34.147
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91103",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.168,
+                    34.171
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91104",
+                "count": 3
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.149,
+                    34.168
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91105",
+                "count": 2
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.166,
+                    34.145
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91106",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.137,
+                    34.137
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91107",
+                "count": 2
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.096,
+                    34.155
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91501",
+                "count": 3
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.307,
+                    34.185
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91502",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.308,
+                    34.176
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "91505",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.344,
+                    34.172
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90230",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.399,
+                    34.007
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90232",
+                "count": 2
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.394,
+                    34.021
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90210",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.401,
+                    34.092
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90211",
+                "count": 2
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.384,
+                    34.065
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90212",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.401,
+                    34.061
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90501",
+                "count": 2
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.314,
+                    33.83
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90502",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.291,
+                    33.842
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90503",
+                "count": 3
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.352,
+                    33.84
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90504",
+                "count": 1
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.326,
+                    33.865
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "zipCode": "90505",
+                "count": 2
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.352,
+                    33.81
+                ]
+            }
+        }
+    ]
+}

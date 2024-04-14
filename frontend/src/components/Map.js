@@ -9,6 +9,13 @@ import axios from "axios"; // Import axios for API requests
 
 import GeoJSONData from "../data/output.geojson";
 import markerImage from "../data/marker.png";
+import heatmapData from "../data/heatmap.geojson"; 
+
+
+const maptilerApiKey = "SbGQ4qpToiGBv5VDdgfc";
+const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
+const googleMapsApiKey = "AIzaSyB5C1aYQpk0q6svZOREnk4tM9mQDP7236A";
+
 
 const Map = () => {
     const mapContainer = useRef(null);
@@ -18,11 +25,6 @@ const Map = () => {
         lat: 34.043926,
         zoom: 13,
     };
-    
-
-    const maptilerApiKey = "SbGQ4qpToiGBv5VDdgfc";
-    const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
-    const googleMapsApiKey = "AIzaSyB5C1aYQpk0q6svZOREnk4tM9mQDP7236A";
 
     const [showSidebar, setShowSidebar] = useState(false);
     const [sidebarPostalCode, setSidebarPostalCode] = useState("");
@@ -77,6 +79,48 @@ const Map = () => {
                     "icon-size": 0.07,
                 },
             });
+
+            // Add heatmap layer
+            mapInstance.addSource("heatmap", {
+              type: "geojson",
+              data: heatmapData,
+          });
+
+          mapInstance.addLayer({
+            id: "heatmapLayer",
+            type: "heatmap",
+            source: "heatmap",
+            paint: {
+                "heatmap-weight": [
+                    "interpolate",
+                    ["linear"],
+                    ["get", "intensity"],
+                    1, 0,
+                    30, 1
+                ],
+                "heatmap-intensity": 2, // Increased sensitivity
+                "heatmap-color": [
+                    "interpolate",
+                    ["linear"],
+                    ["heatmap-density"],
+                    0,
+                    "rgba(33,102,172,0)",
+                    0.2,
+                    "rgb(103,169,207)",
+                    0.4,
+                    "rgb(209,229,240)",
+                    0.6,
+                    "rgb(253,219,199)",
+                    0.8,
+                    "rgb(239,138,98)",
+                    1,
+                    "rgb(178,24,43)"
+                ],
+                "heatmap-radius": 40, // Increased radius
+                "heatmap-opacity": 0.9,
+            },
+          });
+
 
             mapInstance.on("click", (e) => {
                 const features = mapInstance.queryRenderedFeatures(e.point, {
@@ -189,6 +233,7 @@ const Map = () => {
               console.error('Error submitting report:', error);
               // Handle error, display error message, etc.
           });
+
   };
 
   return (
@@ -209,7 +254,7 @@ const Map = () => {
                     <label htmlFor="drugType">Drug Type:</label>
                     <select id="drugType" value={drugType} onChange={(e) => setDrugType(e.target.value)}>
                         <option value="">Select Drug Type</option>
-                        <option value="meth">Meth</option>
+                        <option value="meth">Meth</option>f
                         <option value="cocaine">Cocaine</option>
                         <option value="heroin">Heroin</option>
                         <option value="undefined">Undefined</option>

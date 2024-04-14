@@ -36,7 +36,7 @@ const generateReports = (zipCode) => {
   let positiveTestsRange;
   
   if (zipCode.startsWith("900")) { // Downtown LA zip codes
-    positiveTestsRange = [5, ];
+    positiveTestsRange = [5, 10];
   } else if (zipCode.startsWith("904")) { // Santa Monica zip codes
     positiveTestsRange = [3, 5];
   } else if (zipCode.startsWith("908")) { // Long Beach zip codes
