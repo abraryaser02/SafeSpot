@@ -11,3 +11,17 @@
   width: 100%;
   height: 100%;
 }
+
+html,
+body,
+main {
+  height: 100%;
+  background-color: #eee;
+}
+
+main {
+  padding: 1em;
+  gap: 1em;
+  display: flex;
+  flex-direction: column;
+}

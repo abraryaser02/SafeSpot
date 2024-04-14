@@ -1,0 +1,12 @@
+.maplibregl-ctrl-top-right {
+  left: 0;
+  right: auto;
+  margin-left: 10px;
+}
+
+form.svelte-zh3kmv.svelte-zh3kmv,
+form.svelte-zh3kmv.svelte-zh3kmv:focus-within,
+form.svelte-zh3kmv.svelte-zh3kmv:hover {
+  width: 400px;
+  max-width: 400px;
+}
