@@ -23,6 +23,9 @@ const Map = () => {
     const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
     const googleMapsApiKey = "AIzaSyB5C1aYQpk0q6svZOREnk4tM9mQDP7236A";
 
+    const [showSidebar, setShowSidebar] = useState(false);
+    const [sidebarPostalCode, setSidebarPostalCode] = useState("");
+
     useEffect(() => {
         if (!mapContainer.current) return;
 
@@ -85,6 +88,8 @@ const Map = () => {
                         <h3>${properties["Program Name"]}</h3>
                         <p>Address: ${properties["Street Address 1"]}, ${properties["City"]}, ${properties["State"]} ${properties["Zip"]}</p>
                         <p>Phone: ${properties["Phone"]}</p>
+                        <p>Log a Positive Case</p>
+                        <button class="report-positive-btn" onclick="openSidebar('${properties["Zip"]}')">Log a Positive Case</button>
                     `;
 
                     new maplibregl.Popup()
@@ -109,8 +114,7 @@ const Map = () => {
                                         const description = `
                                             <div class="custom-popup">
                                                 <h1>${positiveCaseNum} cases found in zipcode ${postalCode}</h1>
-                                                <p>Log a Positive Case</p>
-                                                <button onclick="document.dispatchEvent(new CustomEvent('toggleSidebar', { detail: { postalCode: '${postalCode}' } }))">Click Me</button>
+                                                <button class="report-positive-btn" onclick="openSidebar('${postalCode}')">Log a Positive Case</button>
                                             </div>`;
 
                                         new maplibregl.Popup()
@@ -123,8 +127,7 @@ const Map = () => {
                                         const description = `
                                             <div class="custom-popup">
                                                 <h1>0 cases found in zipcode ${postalCode}</h1>
-                                                <p>Log a Positive Case</p>
-                                                <button onclick="document.dispatchEvent(new CustomEvent('toggleSidebar', { detail: { postalCode: '${postalCode}' } }))">Click Me</button>
+                                                <button class="report-positive-btn" onclick="openSidebar('${postalCode}')">Log a Positive Case</button>
                                             </div>`;
 
                                         new maplibregl.Popup()
@@ -145,6 +148,14 @@ const Map = () => {
             console.error("An error occurred while loading the map:", error);
         });
 
+        map.current = mapInstance;
+
+        // Function to open the sidebar
+        window.openSidebar = (postalCode) => {
+            setSidebarPostalCode(postalCode);
+            setShowSidebar(true);
+        };
+
         return () => {
             if (map.current) {
                 map.current.remove();
@@ -159,6 +170,17 @@ const Map = () => {
                 ref={mapContainer}
                 style={{ position: "absolute", width: "100%", height: "100%" }}
             />
+            {showSidebar && (
+                <div className="sidebar">
+                    {/* Close button */}
+                    <button className="close-button" onClick={() => setShowSidebar(false)}>
+                        &#10005;
+                    </button>
+                    {/* Content of your sidebar */}
+                    <h2>Sidebar Content</h2>
+                    <p>This is the sidebar that pops up when you click the button.</p>
+                </div>
+            )}
         </>
     );
 };

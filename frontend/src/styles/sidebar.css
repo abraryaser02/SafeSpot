@@ -1,22 +1,19 @@
 .sidebar {
-    position: fixed;
+    position: absolute;
     top: 0;
     right: 0;
     width: 300px;
     height: 100%;
     background-color: #fff;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    overflow-y: auto; /* Allow sidebar content to be scrolled if it exceeds the height */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   
-  .sidebar h2 {
-    margin: 20px 0 10px;
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
   }
-  
-  .sidebar p {
-    margin: 0 20px 20px;
-  }
-  
-  /* You can add more styles as needed */
-  
