@@ -2,7 +2,8 @@ import React, { useRef, useEffect } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
-// import "@maptiler/geocoding-control/dist/style.css";
+import "@maptiler/geocoding-control/style.css";
+import "../styles/searchBar.css";
 
 const Map = () => {
   const mapContainer = useRef(null);
