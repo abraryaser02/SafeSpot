@@ -4,7 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
 import "@maptiler/geocoding-control/style.css";
 import "../styles/searchBar.css";
-
+import NavBar from "./NavBar"; // Import NavBar component
 import axios from "axios"; // Import axios for API requests
 
 // Import your GeoJSON file
@@ -13,7 +13,7 @@ import GeoJSONData from "../data/output.geojson";
 // Import the marker image
 import markerImage from "../data/marker.png";
 
-const postiveCaseNum = 0;
+const positiveCaseNum = 0;
 
 const Map = () => {
   const mapContainer = useRef(null);
@@ -82,10 +82,31 @@ const Map = () => {
       });
 
       mapInstance.on("click", (e) => {
-        const { lng, lat } = e.lngLat;
-        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleMapsApiKey}`;
-
-        axios
+        const features = mapInstance.queryRenderedFeatures(e.point, {
+          layers: ["markers"], // Specify the layer where your markers are located
+        });
+      
+        if (features.length > 0) {
+          const feature = features[0];
+          const properties = feature.properties;
+      
+          // Construct the HTML content for the popup
+          const popupContent = `
+            <h3>${properties["Program Name"]}</h3>
+            <p>Address: ${properties["Street Address 1"]}, ${properties["City"]}, ${properties["State"]} ${properties["Zip"]}</p>
+            <p>Phone: ${properties["Phone"]}</p>
+          `;
+      
+          // Display the information in a popup
+          new maplibregl.Popup()
+            .setLngLat(feature.geometry.coordinates)
+            .setHTML(popupContent)
+            .addTo(mapInstance);
+        } else {
+          const { lng, lat } = e.lngLat;
+          const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleMapsApiKey}`;
+    
+          axios
           .get(url)
           .then((response) => {
             const results = response.data.results;
@@ -101,7 +122,7 @@ const Map = () => {
 
               const description = `
                 <div class="custom-popup">
-                  <h1>${postiveCaseNum} cases found in zipcode ${postalCode}</h1>
+                  <h1>${positiveCaseNum} cases found in zipcode ${postalCode}</h1>
                   <p>Log a Positive Case</p>
                   <button onclick="console.log('Button clicked!')">Click Me</button>
                 </div>`;
@@ -115,6 +136,7 @@ const Map = () => {
             }
           })
           .catch((error) => console.error("Error fetching the address:", error));
+        }
       });
     });
 
@@ -129,11 +151,14 @@ const Map = () => {
   }, []);
 
   return (
-    <div
-      id="map"
-      ref={mapContainer}
-      style={{ position: "absolute", width: "100%", height: "100%" }}
-    />
+    <>
+      <NavBar /> {/* Include NavBar component here */}
+      <div
+        id="map"
+        ref={mapContainer}
+        style={{ position: "absolute", width: "100%", height: "100%" }}
+      />
+    </>
   );
 };
 
