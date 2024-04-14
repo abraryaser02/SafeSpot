@@ -3,6 +3,8 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
 import "@maptiler/geocoding-control/style.css";
+import "../styles/searchBar.css";
+
 import axios from "axios"; // Import axios for API requests
 
 // Import your GeoJSON file
@@ -24,6 +26,7 @@ const Map = () => {
 
   const maptilerApiKey = "SbGQ4qpToiGBv5VDdgfc";
   const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
+  const googleMapsApiKey = "AIzaSyB5C1aYQpk0q6svZOREnk4tM9mQDP7236A";
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -79,49 +82,39 @@ const Map = () => {
       });
 
       mapInstance.on("click", (e) => {
-        const features = mapInstance.queryRenderedFeatures(e.point, {
-          layers: ["markers"], // Specify the layer where your markers are located
-        });
-      
-        if (features.length > 0) {
-          const feature = features[0];
-          const properties = feature.properties;
-      
-          // Construct the HTML content for the popup
-          const popupContent = `
-            <h3>${properties["Program Name"]}</h3>
-            <p>Address: ${properties["Street Address 1"]}, ${properties["City"]}, ${properties["State"]} ${properties["Zip"]}</p>
-            <p>Phone: ${properties["Phone"]}</p>
-          `;
-      
-          // Display the information in a popup
-          new maplibregl.Popup()
-            .setLngLat(feature.geometry.coordinates)
-            .setHTML(popupContent)
-            .addTo(mapInstance);
-        } else {
-          const { lng, lat } = e.lngLat;
-          const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${maptilerApiKey}`;
-    
-          axios
-            .get(url)
-            .then((response) => {
-              const properties = response.data.features[0].properties;
-              const postcode = properties.postcode || "No zipcode found";
+        const { lng, lat } = e.lngLat;
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleMapsApiKey}`;
+
+        axios
+          .get(url)
+          .then((response) => {
+            const results = response.data.results;
+            if (results && results.length > 0) {
+              // Find the address component containing the postal code
+              const postalCodeComponent = results[0].address_components.find(
+                (component) => component.types.includes("postal_code")
+              );
+
+              const postalCode = postalCodeComponent
+                ? postalCodeComponent.short_name
+                : "No zipcode found";
+
               const description = `
-          <div class="custom-popup">
-              <h1>${postiveCaseNum} cases found in zipcode ${postcode}</h1>
-              <p>Log a Positive Case</p>
-              <button onclick="console.log('Button clicked!')">Click Me</button>
-          </div>`;
-    
+                <div class="custom-popup">
+                  <h1>${postiveCaseNum} cases found in zipcode ${postalCode}</h1>
+                  <p>Log a Positive Case</p>
+                  <button onclick="console.log('Button clicked!')">Click Me</button>
+                </div>`;
+
               new maplibregl.Popup()
                 .setLngLat([lng, lat])
                 .setHTML(description)
                 .addTo(mapInstance);
-            })
-            .catch((error) => console.error("Error fetching the zipcode:", error));
-        }
+            } else {
+              console.error("No results found for the provided coordinates");
+            }
+          })
+          .catch((error) => console.error("Error fetching the address:", error));
       });
     });
 
