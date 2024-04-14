@@ -6,6 +6,14 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
 import "@maptiler/geocoding-control/style.css";
 import "../styles/searchBar.css";
+import axios from "axios"; // Import axios for API requests
+
+// Import your GeoJSON file
+import GeoJSONData from "../data/output.geojson";
+
+
+// Import the marker image
+import markerImage from "../data/marker.png";
 
 const postiveCaseNum = 0;
 
@@ -22,7 +30,7 @@ const Map = () => {
   const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
 
   useEffect(() => {
-    if (!mapContainer.current) return; // Exit if mapContainer is not initialized
+    if (!mapContainer.current) return;
 
     const mapInstance = new maplibregl.Map({
       container: mapContainer.current,
@@ -34,6 +42,9 @@ const Map = () => {
     });
 
     mapInstance.on("load", () => {
+      console.log("Map loaded successfully");
+
+      // Add your map controls
       mapInstance.addControl(
         new maplibregl.NavigationControl({ showCompass: false }),
         "bottom-right"
@@ -43,31 +54,86 @@ const Map = () => {
         map: mapInstance,
       });
       mapInstance.addControl(gc);
+
       mapInstance.keyboard.enable();
+
+      mapInstance.on("click", (e) => {
+        const { lng, lat } = e.lngLat;
+        const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${maptilerApiKey}`;
+  
+        axios
+          .get(url)
+          .then((response) => {
+            const properties = response.data.features[0].properties;
+            const postcode = properties.postcode || "No zipcode found";
+            const description = `
+      <div class="custom-popup">
+          <h1>${postiveCaseNum} cases found in zipcode ${postcode}</h1>
+          <p>Log a Positive Case</p>
+          <button onclick="console.log('Button clicked!')">Click Me</button>
+      </div>`;
+  
+            new maplibregl.Popup()
+              .setLngLat([lng, lat])
+              .setHTML(description)
+              .addTo(mapInstance);
+          })
+          .catch((error) => console.error("Error fetching the zipcode:", error));
+      });
+
+      // Add the marker image to the map
+      const image = new Image();
+      image.src = markerImage;
+
+      image.onload = () => {
+        mapInstance.addImage("marker", image);
+      };
+
+      // Add markers from GeoJSON data
+      mapInstance.addSource("markers", {
+        type: "geojson",
+        data: GeoJSONData,
+      });
+
+      mapInstance.addLayer({
+        id: "markers",
+        type: "symbol",
+        source: "markers",
+        layout: {
+          "icon-image": "marker", // Use the marker image for the icons
+          "icon-allow-overlap": true,
+          "icon-size": 0.07,
+        },
+      });
+    });
+
+    // Handle errors
+    mapInstance.on("error", (error) => {
+      console.error("An error occurred while loading the map:", error);
     });
 
     mapInstance.on("click", (e) => {
-      const { lng, lat } = e.lngLat;
-      const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${maptilerApiKey}`;
-
-      axios
-        .get(url)
-        .then((response) => {
-          const properties = response.data.features[0].properties;
-          const postcode = properties.postcode || "No zipcode found";
-          const description = `
-    <div class="custom-popup">
-        <h1>${postiveCaseNum} cases found in zipcode ${postcode}</h1>
-        <p>Log a Positive Case</p>
-        <button onclick="console.log('Button clicked!')">Click Me</button>
-    </div>`;
-
-          new maplibregl.Popup()
-            .setLngLat([lng, lat])
-            .setHTML(description)
-            .addTo(mapInstance);
-        })
-        .catch((error) => console.error("Error fetching the zipcode:", error));
+      const features = mapInstance.queryRenderedFeatures(e.point, {
+        layers: ["markers"], // Specify the layer where your markers are located
+      });
+    
+      if (features.length > 0) {
+        const feature = features[0];
+        const properties = feature.properties;
+    
+        // Construct the HTML content for the popup
+        const popupContent = `
+          <h3>${properties["Program Name"]}</h3>
+          <p>Address: ${properties["Street Address 1"]}, ${properties["City"]}, ${properties["State"]} ${properties["Zip"]}</p>
+          <p>Phone: ${properties["Phone"]}</p>
+        `;
+    
+        // Display the information in a popup
+        new maplibregl.Popup()
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML(popupContent)
+          .addTo(mapInstance);
+      }
     });
 
     map.current = mapInstance;
