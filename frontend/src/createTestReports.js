@@ -1,182 +1,80 @@
-import React, { useRef, useEffect, useState } from "react";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
-import "@maptiler/geocoding-control/style.css";
-import "../styles/searchBar.css";
-import NavBar from "./NavBar"; // Import NavBar component
-import axios from "axios"; // Import axios for API requests
-import "../styles/sidebar.css"; // Import CSS for sidebar styles
+const axios = require('axios');
+const fs = require('fs');
 
-// Import your GeoJSON file
-import GeoJSONData from "../data/output.geojson";
+// Define the zip codes and their corresponding range of positive test numbers
+const zipCodes = [
+  // Downtown LA
+  "90017", "90012", "90015", "90014", "90021", "90013",
+  "90007", "90006", "90005", "90004", "90010", "90020",
+  // Hollywood
+  "90028", "90038", "90068",
+  // West LA
+  "90024", "90025", "90049",
+  // Santa Monica
+  "90401", "90402", "90403", "90404", "90405",
+  // Long Beach
+  "90802", "90803", "90804", "90805", "90806", "90807",
+  // Pasadena
+  "91101", "91103", "91104", "91105", "91106", "91107",
+  // Burbank
+  "91501", "91502", "91505",
+  // Culver City
+  "90230", "90232",
+  // Beverly Hills
+  "90210", "90211", "90212",
+  // Torrance
+  "90501", "90502", "90503", "90504", "90505"
+];
 
-// Import the marker image
-import markerImage from "../data/marker.png";
-
-const positiveCaseNum = 0;
-
-const Map = () => {
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const initialState = {
-    lng: -117.71319812050054,
-    lat: 34.099885457669316,
-    zoom: 16.5,
-  };
-
-  const maptilerApiKey = "SbGQ4qpToiGBv5VDdgfc";
-  const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
-  const googleMapsApiKey = "AIzaSyB5C1aYQpk0q6svZOREnk4tM9mQDP7236A";
-
-  const [showSidebar, setShowSidebar] = useState(false);
-
-  useEffect(() => {
-    if (!mapContainer.current) return;
-
-    const mapInstance = new maplibregl.Map({
-      container: mapContainer.current,
-      style: `https://api.maptiler.com/maps/${maptilerMapReference}/style.json?key=${maptilerApiKey}`,
-      center: [initialState.lng, initialState.lat],
-      zoom: initialState.zoom,
-      minZoom: 2,
-      maxZoom: 18,
-    });
-
-    mapInstance.on("load", () => {
-      console.log("Map loaded successfully");
-
-      // Add your map controls
-      mapInstance.addControl(
-        new maplibregl.NavigationControl({ showCompass: false }),
-        "bottom-right"
-      );
-
-      const gc = new GeocodingControl({
-        apiKey: maptilerApiKey,
-        map: mapInstance,
-      });
-      mapInstance.addControl(gc);
-      mapInstance.keyboard.enable();
-
-      // Add the marker image to the map
-      const image = new Image();
-      image.src = markerImage;
-
-      image.onload = () => {
-        mapInstance.addImage("marker", image);
-      };
-
-      // Add markers from GeoJSON data
-      mapInstance.addSource("markers", {
-        type: "geojson",
-        data: GeoJSONData,
-      });
-
-      mapInstance.addLayer({
-        id: "markers",
-        type: "symbol",
-        source: "markers",
-        layout: {
-          "icon-image": "marker", // Use the marker image for the icons
-          "icon-allow-overlap": true,
-          "icon-size": 0.07,
-        },
-      });
-
-      mapInstance.on("click", (e) => {
-        const features = mapInstance.queryRenderedFeatures(e.point, {
-          layers: ["markers"], // Specify the layer where your markers are located
-        });
-
-        if (features.length > 0) {
-          const feature = features[0];
-          const properties = feature.properties;
-
-          // Construct the HTML content for the popup
-          const popupContent = `
-            <h3>${properties["Program Name"]}</h3>
-            <p>Address: ${properties["Street Address 1"]}, ${properties["City"]}, ${properties["State"]} ${properties["Zip"]}</p>
-            <p>Phone: ${properties["Phone"]}</p>
-            <button id="sidebar-button">Click Me</button>
-          `;
-
-          // Display the information in a popup
-          const popup = new maplibregl.Popup()
-            .setLngLat(feature.geometry.coordinates)
-            .setHTML(popupContent)
-            .addTo(mapInstance);
-
-          // Add click event listener to the button within the popup
-          popup.getElement().addEventListener("click", () => {
-            setShowSidebar(true);
-          });
-        } else {
-          const { lng, lat } = e.lngLat;
-          const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleMapsApiKey}`;
-
-          axios
-            .get(url)
-            .then((response) => {
-              const results = response.data.results;
-              if (results && results.length > 0) {
-                // Find the address component containing the postal code
-                const postalCodeComponent = results[0].address_components.find(
-                  (component) => component.types.includes("postal_code")
-                );
-
-                const postalCode = postalCodeComponent
-                  ? postalCodeComponent.short_name
-                  : "No zipcode found";
-
-                const description = `
-                  <div class="custom-popup">
-                    <h1>${positiveCaseNum} cases found in zipcode ${postalCode}</h1>
-                    <p>Log a Positive Case</p>
-                  </div>`;
-
-                new maplibregl.Popup()
-                  .setLngLat([lng, lat])
-                  .setHTML(description)
-                  .addTo(mapInstance);
-              } else {
-                console.error("No results found for the provided coordinates");
-              }
-            })
-            .catch((error) =>
-              console.error("Error fetching the address:", error)
-            );
-        }
-      });
-    });
-
-    // Handle errors
-    mapInstance.on("error", (error) => {
-      console.error("An error occurred while loading the map:", error);
-    });
-
-    map.current = mapInstance;
-
-    return () => map.current && map.current.remove();
-  }, []);
-
-  return (
-    <>
-      <NavBar /> {/* Include NavBar component here */}
-      <div
-        id="map"
-        ref={mapContainer}
-        style={{ position: "absolute", width: "100%", height: "100%" }}
-      />
-      {showSidebar && (
-        <div className="sidebar">
-          {/* Content of your sidebar */}
-          <h2>Sidebar Content</h2>
-          <p>This is the sidebar that pops up when you click the button.</p>
-        </div>
-      )}
-    </>
-  );
+// Function to generate a random integer within a range
+const getRandomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-export default Map;
+// Function to generate reports for a given zip code
+const generateReports = (zipCode) => {
+  let positiveTestsRange;
+  
+  if (zipCode.startsWith("900")) { // Downtown LA zip codes
+    positiveTestsRange = [5, ];
+  } else if (zipCode.startsWith("904")) { // Santa Monica zip codes
+    positiveTestsRange = [3, 5];
+  } else if (zipCode.startsWith("908")) { // Long Beach zip codes
+    positiveTestsRange = [2, 5];
+  } else { // Other zip codes
+    positiveTestsRange = [1, 3];
+  }
+
+  const reports = [];
+  for (let i = 0; i < getRandomInt(positiveTestsRange[0], positiveTestsRange[1]); i++) {
+    const drugTypes = ['heroin', 'cocaine', 'meth', 'other'];
+    const drugType = drugTypes[Math.floor(Math.random() * drugTypes.length)];
+    reports.push({ drugType, zipCode });
+  }
+  return reports;
+};
+
+// Function to post reports to the backend API
+const postReports = async (reports) => {
+  for (const report of reports) {
+    try {
+      await axios.post('http://localhost:8800/api/reports', report);
+      console.log(`Report posted for zip code ${report.zipCode}`);
+    } catch (error) {
+      console.error(`Error posting report for zip code ${report.zipCode}:`, error.response.data);
+    }
+  }
+};
+
+// Generate reports for all zip codes
+const allReports = [];
+for (const zipCode of zipCodes) {
+  const reports = generateReports(zipCode);
+  allReports.push(...reports);
+}
+
+// Write the generated reports to a JSON file for reference
+fs.writeFileSync('generated_reports.json', JSON.stringify(allReports, null, 2), 'utf8');
+
+// Post the generated reports to the backend API
+postReports(allReports);

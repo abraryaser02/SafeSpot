@@ -14,10 +14,11 @@ const Map = () => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const initialState = {
-        lng: -117.71319812050054,
-        lat: 34.099885457669316,
-        zoom: 16.5,
+        lng: -118.242432,
+        lat: 34.043926,
+        zoom: 13,
     };
+    
 
     const maptilerApiKey = "SbGQ4qpToiGBv5VDdgfc";
     const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
@@ -25,6 +26,8 @@ const Map = () => {
 
     const [showSidebar, setShowSidebar] = useState(false);
     const [sidebarPostalCode, setSidebarPostalCode] = useState("");
+    const [drugType, setDrugType] = useState("");
+    const [notes, setNotes] = useState("");
 
     useEffect(() => {
         if (!mapContainer.current) return;
@@ -88,8 +91,6 @@ const Map = () => {
                         <h3>${properties["Program Name"]}</h3>
                         <p>Address: ${properties["Street Address 1"]}, ${properties["City"]}, ${properties["State"]} ${properties["Zip"]}</p>
                         <p>Phone: ${properties["Phone"]}</p>
-                        <p>Log a Positive Case</p>
-                        <button class="report-positive-btn" onclick="openSidebar('${properties["Zip"]}')">Log a Positive Case</button>
                     `;
 
                     new maplibregl.Popup()
@@ -149,6 +150,7 @@ const Map = () => {
         });
 
         map.current = mapInstance;
+        
 
         // Function to open the sidebar
         window.openSidebar = (postalCode) => {
@@ -163,26 +165,64 @@ const Map = () => {
         };
     }, []);
 
-    return (
-        <>
-            <div
-                id="map"
-                ref={mapContainer}
-                style={{ position: "absolute", width: "100%", height: "100%" }}
-            />
-            {showSidebar && (
-                <div className="sidebar">
-                    {/* Close button */}
-                    <button className="close-button" onClick={() => setShowSidebar(false)}>
-                        &#10005;
-                    </button>
-                    {/* Content of your sidebar */}
-                    <h2>Sidebar Content</h2>
-                    <p>This is the sidebar that pops up when you click the button.</p>
-                </div>
-            )}
-        </>
-    );
+    const handleSubmit = (e) => {
+      e.preventDefault();
+
+      // Create JSON object with the selected drug type, notes, zip code, and reportedAt timestamp
+      const reportData = {
+          drugType: drugType,
+          notes: notes,
+          zipCode: sidebarPostalCode,
+          reportedAt: new Date().toISOString()
+      };
+
+      // Submit the report data to your backend API
+      axios.post('http://localhost:8800/api/reports', reportData)
+          .then((response) => {
+              console.log('Report submitted successfully:', response.data);
+              // Optionally, you can reset the form fields or close the sidebar after successful submission
+              setDrugType('');
+              setNotes('');
+              setShowSidebar(false);
+          })
+          .catch((error) => {
+              console.error('Error submitting report:', error);
+              // Handle error, display error message, etc.
+          });
+  };
+
+  return (
+    <>
+        <div
+            id="map"
+            ref={mapContainer}
+            style={{ position: "absolute", width: "100%", height: "100%" }}
+        />
+        {showSidebar && (
+            <div className="sidebar">
+                {/* Close button */}
+                <button className="close-button" onClick={() => setShowSidebar(false)}>
+                    &#10005;
+                </button>
+                {/* Form for reporting a positive case */}
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="drugType">Drug Type:</label>
+                    <select id="drugType" value={drugType} onChange={(e) => setDrugType(e.target.value)}>
+                        <option value="">Select Drug Type</option>
+                        <option value="meth">Meth</option>
+                        <option value="cocaine">Cocaine</option>
+                        <option value="heroin">Heroin</option>
+                        <option value="undefined">Undefined</option>
+                    </select>
+                    <label htmlFor="notes">Notes:</label>
+                    <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)}></textarea>
+                    <button type="submit">Submit Report</button>
+                </form>
+            </div>
+        )}
+    </>
+  );
 };
+
 
 export default Map;
