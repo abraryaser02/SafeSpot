@@ -5,6 +5,12 @@ import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
 import "@maptiler/geocoding-control/style.css";
 import "../styles/searchBar.css";
 
+// Import your GeoJSON file
+import GeoJSONData from "../data/output.geojson";
+
+// Import the marker image
+import markerImage from "../data/marker.png";
+
 const Map = () => {
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -28,6 +34,9 @@ const Map = () => {
     });
 
     map.current.on("load", () => {
+      console.log("Map loaded successfully");
+
+      // Add your map controls
       map.current.addControl(
         new maplibregl.NavigationControl({ showCompass: false }),
         "bottom-right"
@@ -40,6 +49,60 @@ const Map = () => {
       map.current.addControl(gc);
 
       map.current.keyboard.enable();
+
+      // Add the marker image to the map
+      const image = new Image();
+      image.src = markerImage;
+
+      image.onload = () => {
+        map.current.addImage("marker", image);
+      };
+
+      // Add markers from GeoJSON data
+      map.current.addSource("markers", {
+        type: "geojson",
+        data: GeoJSONData,
+      });
+
+      map.current.addLayer({
+        id: "markers",
+        type: "symbol",
+        source: "markers",
+        layout: {
+          "icon-image": "marker", // Use the marker image for the icons
+          "icon-allow-overlap": true,
+          "icon-size": 0.07,
+        },
+      });
+    });
+
+    // Handle errors
+    map.current.on("error", (error) => {
+      console.error("An error occurred while loading the map:", error);
+    });
+
+    map.current.on("click", (e) => {
+      const features = map.current.queryRenderedFeatures(e.point, {
+        layers: ["markers"], // Specify the layer where your markers are located
+      });
+    
+      if (features.length > 0) {
+        const feature = features[0];
+        const properties = feature.properties;
+    
+        // Construct the HTML content for the popup
+        const popupContent = `
+          <h3>${properties["Program Name"]}</h3>
+          <p>Address: ${properties["Street Address 1"]}, ${properties["City"]}, ${properties["State"]} ${properties["Zip"]}</p>
+          <p>Phone: ${properties["Phone"]}</p>
+        `;
+    
+        // Display the information in a popup
+        new maplibregl.Popup()
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML(popupContent)
+          .addTo(map.current);
+      }
     });
 
     return () => {
