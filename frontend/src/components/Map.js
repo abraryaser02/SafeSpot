@@ -1,9 +1,13 @@
 import React, { useRef, useEffect } from "react";
 import maplibregl from "maplibre-gl";
+import axios from "axios"; // Import axios for API requests
+
 import "maplibre-gl/dist/maplibre-gl.css";
 import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
 import "@maptiler/geocoding-control/style.css";
 import "../styles/searchBar.css";
+
+const postiveCaseNum = 0;
 
 const Map = () => {
   const mapContainer = useRef(null);
@@ -18,7 +22,9 @@ const Map = () => {
   const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
 
   useEffect(() => {
-    map.current = new maplibregl.Map({
+    if (!mapContainer.current) return; // Exit if mapContainer is not initialized
+
+    const mapInstance = new maplibregl.Map({
       container: mapContainer.current,
       style: `https://api.maptiler.com/maps/${maptilerMapReference}/style.json?key=${maptilerApiKey}`,
       center: [initialState.lng, initialState.lat],
@@ -27,26 +33,46 @@ const Map = () => {
       maxZoom: 18,
     });
 
-    map.current.on("load", () => {
-      map.current.addControl(
+    mapInstance.on("load", () => {
+      mapInstance.addControl(
         new maplibregl.NavigationControl({ showCompass: false }),
         "bottom-right"
       );
-
       const gc = new GeocodingControl({
         apiKey: maptilerApiKey,
-        map: map.current,
+        map: mapInstance,
       });
-      map.current.addControl(gc);
-
-      map.current.keyboard.enable();
+      mapInstance.addControl(gc);
+      mapInstance.keyboard.enable();
     });
 
-    return () => {
-      if (map.current) {
-        map.current.remove();
-      }
-    };
+    mapInstance.on("click", (e) => {
+      const { lng, lat } = e.lngLat;
+      const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${maptilerApiKey}`;
+
+      axios
+        .get(url)
+        .then((response) => {
+          const properties = response.data.features[0].properties;
+          const postcode = properties.postcode || "No zipcode found";
+          const description = `
+    <div class="custom-popup">
+        <h1>${postiveCaseNum} cases found in zipcode ${postcode}</h1>
+        <p>Log a Positive Case</p>
+        <button onclick="console.log('Button clicked!')">Click Me</button>
+    </div>`;
+
+          new maplibregl.Popup()
+            .setLngLat([lng, lat])
+            .setHTML(description)
+            .addTo(mapInstance);
+        })
+        .catch((error) => console.error("Error fetching the zipcode:", error));
+    });
+
+    map.current = mapInstance;
+
+    return () => map.current && map.current.remove();
   }, []);
 
   return (
