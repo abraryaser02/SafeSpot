@@ -1,7 +1,6 @@
 .heading {
   margin: 0;
   padding: 0px;
-  background-color: rgba(255, 255, 255, 0);
   color: rgb(0, 0, 0);
   text-align: center;
 }
@@ -9,4 +8,22 @@
 .heading > h1 {
   padding: 20px;
   margin: 0;
+}
+
+.navbar {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  justify-content: space-between; /* Space between the button and logo */
+  padding: 10px 20px; /* Padding around the navbar */
+  background-color: #f8f9fa; /* Light background color for the navbar */
+}
+
+.logo-container {
+  flex-grow: 1; /* Allows the container to take up any extra space */
+  display: flex;
+  justify-content: center; /* Center the logo within the container */
+}
+
+.logo-container img {
+  height: 50px; /* Adjust based on your logo's size */
 }
