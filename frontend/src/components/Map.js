@@ -4,12 +4,16 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
 import "@maptiler/geocoding-control/style.css";
 import "../styles/searchBar.css";
+import axios from "axios"; // Import axios for API requests
 
 // Import your GeoJSON file
 import GeoJSONData from "../data/output.geojson";
 
+
 // Import the marker image
 import markerImage from "../data/marker.png";
+
+const postiveCaseNum = 0;
 
 const Map = () => {
   const mapContainer = useRef(null);
@@ -24,7 +28,9 @@ const Map = () => {
   const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
 
   useEffect(() => {
-    map.current = new maplibregl.Map({
+    if (!mapContainer.current) return;
+
+    const mapInstance = new maplibregl.Map({
       container: mapContainer.current,
       style: `https://api.maptiler.com/maps/${maptilerMapReference}/style.json?key=${maptilerApiKey}`,
       center: [initialState.lng, initialState.lat],
@@ -33,38 +39,62 @@ const Map = () => {
       maxZoom: 18,
     });
 
-    map.current.on("load", () => {
+    mapInstance.on("load", () => {
       console.log("Map loaded successfully");
 
       // Add your map controls
-      map.current.addControl(
+      mapInstance.addControl(
         new maplibregl.NavigationControl({ showCompass: false }),
         "bottom-right"
       );
 
       const gc = new GeocodingControl({
         apiKey: maptilerApiKey,
-        map: map.current,
+        map: mapInstance,
       });
-      map.current.addControl(gc);
+      mapInstance.addControl(gc);
 
-      map.current.keyboard.enable();
+      mapInstance.keyboard.enable();
+
+      mapInstance.on("click", (e) => {
+        const { lng, lat } = e.lngLat;
+        const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${maptilerApiKey}`;
+  
+        axios
+          .get(url)
+          .then((response) => {
+            const properties = response.data.features[0].properties;
+            const postcode = properties.postcode || "No zipcode found";
+            const description = `
+      <div class="custom-popup">
+          <h1>${postiveCaseNum} cases found in zipcode ${postcode}</h1>
+          <p>Log a Positive Case</p>
+          <button onclick="console.log('Button clicked!')">Click Me</button>
+      </div>`;
+  
+            new maplibregl.Popup()
+              .setLngLat([lng, lat])
+              .setHTML(description)
+              .addTo(mapInstance);
+          })
+          .catch((error) => console.error("Error fetching the zipcode:", error));
+      });
 
       // Add the marker image to the map
       const image = new Image();
       image.src = markerImage;
 
       image.onload = () => {
-        map.current.addImage("marker", image);
+        mapInstance.addImage("marker", image);
       };
 
       // Add markers from GeoJSON data
-      map.current.addSource("markers", {
+      mapInstance.addSource("markers", {
         type: "geojson",
         data: GeoJSONData,
       });
 
-      map.current.addLayer({
+      mapInstance.addLayer({
         id: "markers",
         type: "symbol",
         source: "markers",
@@ -77,12 +107,12 @@ const Map = () => {
     });
 
     // Handle errors
-    map.current.on("error", (error) => {
+    mapInstance.on("error", (error) => {
       console.error("An error occurred while loading the map:", error);
     });
 
-    map.current.on("click", (e) => {
-      const features = map.current.queryRenderedFeatures(e.point, {
+    mapInstance.on("click", (e) => {
+      const features = mapInstance.queryRenderedFeatures(e.point, {
         layers: ["markers"], // Specify the layer where your markers are located
       });
     
@@ -101,15 +131,13 @@ const Map = () => {
         new maplibregl.Popup()
           .setLngLat(feature.geometry.coordinates)
           .setHTML(popupContent)
-          .addTo(map.current);
+          .addTo(mapInstance);
       }
     });
 
-    return () => {
-      if (map.current) {
-        map.current.remove();
-      }
-    };
+    map.current = mapInstance;
+
+    return () => map.current && map.current.remove();
   }, []);
 
   return (
