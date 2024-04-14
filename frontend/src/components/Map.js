@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
+// import "@maptiler/geocoding-control/dist/style.css";
 
 const Map = () => {
   const mapContainer = useRef(null);
@@ -29,61 +31,14 @@ const Map = () => {
         new maplibregl.NavigationControl({ showCompass: false }),
         "bottom-right"
       );
+
+      const gc = new GeocodingControl({
+        apiKey: maptilerApiKey,
+        map: map.current,
+      });
+      map.current.addControl(gc);
+
       map.current.keyboard.enable();
-
-      //   map.current.addSource("moments", {
-      //     type: "geojson",
-      //     data: moments,
-      //   });
-
-      //   map.current.loadImage(
-      //     "src/lib/assets/Musicnotes.png",
-      //     async function (error, image) {
-      //       if (error) throw error;
-      //       map.current.addImage("Musicnotes", image);
-      //       console.log("image loaded");
-      //     }
-      //   );
-
-      //   map.current.addLayer({
-      //     id: "moments-layer",
-      //     type: "symbol",
-      //     source: "moments",
-      //     layout: {
-      //       "icon-image": "Musicnotes",
-      //       "icon-size": ["*", ["get", "scalerank"], 0.001],
-      //       "icon-allow-overlap": true,
-      //     },
-      //     paint: {},
-      //   });
-
-      //   map.current.on("click", "moments-layer", async function (e) {
-      //     if (e.features && e.features.length > 0) {
-      //       const feature = e.features[0];
-      //       if (feature.geometry.type === "Point") {
-      //         const coordinates = feature.geometry.coordinates;
-      //         const id = feature.properties.id;
-      //         const momentInfo = await getMomentText(id);
-      //         if (coordinates.length === 2) {
-      //           const popupContent = `<strong>Song:</strong> ${momentInfo.song}<br><strong>Note:</strong> ${momentInfo.description}`;
-      //           new maplibregl.Popup()
-      //             .setLngLat(coordinates)
-      //             .setHTML(popupContent)
-      //             .addTo(map.current);
-      //         } else {
-      //           console.error("Invalid coordinates format");
-      //         }
-      //       }
-      //     }
-      //   });
-
-      //   map.current.on("mouseenter", "moments-layer", function () {
-      //     map.current.getCanvas().style.cursor = "pointer";
-      //   });
-
-      //   map.current.on("mouseleave", "moments-layer", function () {
-      //     map.current.getCanvas().style.cursor = "";
-      //   });
     });
 
     return () => {
