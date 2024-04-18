@@ -7,14 +7,13 @@ import "../styles/searchBar.css";
 import "../styles/sidebar.css";
 import "../styles/map.css";
 import axios from "axios";
+import SideBar from "./SideBar";
 
 import postData from "../data/posts.geojson";
 import musicNote from "../assets/musicnote.png";
-import heatmapData from "../data/heatmap.geojson";
 
 const maptilerApiKey = "UHRJl9L3oK7bh3QT6De6";
 const maptilerMapReference = "99cf5fa2-3c1e-4adf-a1c1-fd879b417597";
-
 const googleMapsApiKey = "AIzaSyB5C1aYQpk0q6svZOREnk4tM9mQDP7236A";
 
 const Map = () => {
@@ -78,55 +77,11 @@ const Map = () => {
             "icon-size": 1,
           },
         });
-        console.log("Image loaded!");
       };
-
-      // Add heatmap layer
-      mapInstance.addSource("heatmap", {
-        type: "geojson",
-        data: heatmapData,
-      });
-
-      mapInstance.addLayer({
-        id: "heatmapLayer",
-        type: "heatmap",
-        source: "heatmap",
-        paint: {
-          "heatmap-weight": [
-            "interpolate",
-            ["linear"],
-            ["get", "intensity"],
-            1,
-            0,
-            30,
-            1,
-          ],
-          "heatmap-intensity": 2, // Increased sensitivity
-          "heatmap-color": [
-            "interpolate",
-            ["linear"],
-            ["heatmap-density"],
-            0,
-            "rgba(33,102,172,0)",
-            0.2,
-            "rgb(103,169,207)",
-            0.4,
-            "rgb(209,229,240)",
-            0.6,
-            "rgb(253,219,199)",
-            0.8,
-            "rgb(239,138,98)",
-            1,
-            "rgb(178,24,43)",
-          ],
-          "heatmap-radius": 40, // Increased radius
-          "heatmap-opacity": 0.9,
-        },
-      });
 
       mapInstance.on("click", (e) => {
         const features = mapInstance.queryRenderedFeatures(e.point, {
-          layers: ["markers"],
+          layers: ["musicNotes"],
         });
 
         if (features.length > 0) {
@@ -256,39 +211,7 @@ const Map = () => {
         ref={mapContainer}
         style={{ position: "absolute", width: "100%", height: "100%" }}
       />
-      {showSidebar && (
-        <div className="sidebar">
-          {/* Close button */}
-          <button
-            className="close-button"
-            onClick={() => setShowSidebar(false)}
-          >
-            &#10005;
-          </button>
-          {/* Form for reporting a positive case */}
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="drugType">Drug Type:</label>
-            <select
-              id="drugType"
-              value={drugType}
-              onChange={(e) => setDrugType(e.target.value)}
-            >
-              <option value="">Select Drug Type</option>
-              <option value="meth">Meth</option>f
-              <option value="cocaine">Cocaine</option>
-              <option value="heroin">Heroin</option>
-              <option value="undefined">Undefined</option>
-            </select>
-            <label htmlFor="notes">Notes:</label>
-            <textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            ></textarea>
-            <button type="submit">Submit Report</button>
-          </form>
-        </div>
-      )}
+      {showSidebar && <SideBar closeSidebar={() => setShowSidebar(false)} />}
     </>
   );
 };

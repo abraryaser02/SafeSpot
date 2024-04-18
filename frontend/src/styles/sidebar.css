@@ -1,76 +1,123 @@
-.sidebar {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 300px;
-  height: 100%;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
 }
 
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 20px;
+.button {
+  display: inline-block;
+  border: 2px solid var(--color-dark);
+  background: var(--color-pink-bright);
+  color: var(--color-pink-bright);
+  box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
   cursor: pointer;
+  padding: 5px 20px;
+  text-align: center;
+  font-size: 18px;
+  color: var(--color-dark);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition-property: color, border-color, background-color;
+  transition-duration: 300ms;
+  transition-timing-function: ease;
 }
 
-.sidebar {
+.button:hover,
+.button:focus {
+  color: var(--color-pink-bright);
+  border: 2px solid var(--color-pink-bright);
+  background: var(--color-dark);
+  text-decoration: none;
+}
+
+.overlay {
+  height: 100vh;
+  position: fixed;
+  z-index: 10; /* You should define the variable --overlay-z-index or replace with a number */
+  top: 0;
+  background-color: #cee7ee; /* Define this variable in the :root or replace with a hex color */
+  overflow: hidden;
+}
+
+.overlay--add {
+  right: -2px;
+  border-top: none;
+  border-left: 2px solid var(--color-dark); /* Ensure --color-dark is defined */
+  height: 100%;
+  box-shadow: -4px 0 6px 0 rgba(0, 0, 0, 0.5);
+}
+
+.overlay__outer {
+  width: calc(40vw - 2px);
+  padding: 2em;
+}
+
+.overlay__content {
+  margin: 0;
+  height: 125%;
+}
+
+/* Styling for section texts and input areas */
+.overlay__section-text {
+  color: var(--color-dark);
+  margin-top: 1em;
+  font-size: 1.1rem;
+}
+
+.songform,
+.subform {
+  width: 100%;
+  height: 18em; /* Adjust height as necessary for songform if different */
+  background-color: #f1f4f5;
+  border: 2px solid var(--color-dark);
+  padding: 0 0.4em;
+  font-size: 12pt;
+  margin: auto;
+  text-align: left;
+}
+
+/* Close button styling */
+.close-btn {
   position: fixed;
   right: 0;
   top: 0;
-  width: 320px;
-  height: 100%;
-  background-color: #ffffff;
-  box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.sidebar form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.sidebar label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.sidebar select,
-.sidebar textarea {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.sidebar textarea {
-  height: 100px;
-  font-family: Arial, sans-serif;
-}
-
-.sidebar button:not(.close-button) {
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 5px;
+  line-height: 1;
   border: none;
-  background-color: #0078a8;
-  color: white;
-  font-size: 16px;
-  transition: background-color 0.3s;
+  background-color: transparent;
+  padding: 5px;
+  cursor: pointer;
 }
 
-.close-button {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font-size: 24px;
+.close-btn__inner {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.close-btn__inner:before,
+.close-btn__inner:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-dark);
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+
+.close-btn__inner:before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close-btn__inner:after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.close-btn__text {
+  visibility: hidden;
+  width: 0;
+  height: 0;
 }
