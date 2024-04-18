@@ -8,6 +8,7 @@ import "../styles/sidebar.css";
 import "../styles/map.css";
 import axios from "axios";
 import AddSongSideBar from "./AddSongSideBar";
+import selectedMusicNote from "../assets/selected-music-note.png";
 
 import postData from "../data/posts.geojson";
 import musicNote from "../assets/musicnote.png";
@@ -15,7 +16,6 @@ import SongPostSideBar from "./SongPostSideBar";
 
 const maptilerApiKey = "UHRJl9L3oK7bh3QT6De6";
 const maptilerMapReference = "99cf5fa2-3c1e-4adf-a1c1-fd879b417597";
-const googleMapsApiKey = "AIzaSyB5C1aYQpk0q6svZOREnk4tM9mQDP7236A";
 
 const Map = () => {
   const mapContainer = useRef(null);
@@ -30,6 +30,7 @@ const Map = () => {
   const [showSongPostSidebar, setShowSongPostSidebar] = useState(false);
   const [sidebarPostalCode, setSidebarPostalCode] = useState("");
   const [notes, setNotes] = useState("");
+  const [song, setSong] = useState("");
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -62,6 +63,7 @@ const Map = () => {
       image.src = musicNote;
       image.onload = () => {
         mapInstance.addImage("musicNote", image);
+        mapInstance.addImage("selectedMusicNote", image);
 
         mapInstance.addSource("musicNotes", {
           type: "geojson",
@@ -98,6 +100,13 @@ const Map = () => {
           setShowSongPostSidebar(true);
           setShowAddSongSidebar(false);
           console.log("Music note clicked");
+
+          const properties = features[0].properties;
+          const song = properties.song;
+          const description = properties.description;
+
+          setSong(song);
+          setNotes(description);
         } else {
           // if user clicks on an empty space
           const { lng, lat } = e.lngLat;
@@ -123,7 +132,7 @@ const Map = () => {
             type: "symbol",
             source: tempSourceId,
             layout: {
-              "icon-image": "musicNote",
+              "icon-image": "selectedMusicNote",
               "icon-allow-overlap": true,
               "icon-size": 1,
             },
@@ -195,6 +204,8 @@ const Map = () => {
       {showSongPostSidebar && (
         <SongPostSideBar
           closeSongPostSidebar={() => setShowSongPostSidebar(false)}
+          song={song}
+          notes={notes}
         />
       )}
     </>
