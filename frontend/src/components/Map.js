@@ -12,17 +12,18 @@ import GeoJSONData from "../data/output.geojson";
 import markerImage from "../data/marker.png";
 import heatmapData from "../data/heatmap.geojson";
 
-const maptilerApiKey = "SbGQ4qpToiGBv5VDdgfc";
-const maptilerMapReference = "62541eae-c092-4439-bb8f-ff1d146db515";
+const maptilerApiKey = "UHRJl9L3oK7bh3QT6De6";
+const maptilerMapReference = "99cf5fa2-3c1e-4adf-a1c1-fd879b417597";
+
 const googleMapsApiKey = "AIzaSyB5C1aYQpk0q6svZOREnk4tM9mQDP7236A";
 
 const Map = () => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const initialState = {
-    lng: -118.242432,
-    lat: 34.043926,
-    zoom: 13,
+    lng: -117.71319812050054,
+    lat: 34.099885457669316,
+    zoom: 16.5,
   };
 
   const [showSidebar, setShowSidebar] = useState(false);
