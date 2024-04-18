@@ -7,10 +7,11 @@ import "../styles/searchBar.css";
 import "../styles/sidebar.css";
 import "../styles/map.css";
 import axios from "axios";
-import SideBar from "./SideBar";
+import AddSongSideBar from "./AddSongSideBar";
 
 import postData from "../data/posts.geojson";
 import musicNote from "../assets/musicnote.png";
+import SongPostSideBar from "./SongPostSideBar";
 
 const maptilerApiKey = "UHRJl9L3oK7bh3QT6De6";
 const maptilerMapReference = "99cf5fa2-3c1e-4adf-a1c1-fd879b417597";
@@ -25,9 +26,9 @@ const Map = () => {
     zoom: 16.5,
   };
 
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showAddSongSidebar, setShowAddSongSidebar] = useState(false);
+  const [showSongPostSidebar, setShowSongPostSidebar] = useState(false);
   const [sidebarPostalCode, setSidebarPostalCode] = useState("");
-  const [drugType, setDrugType] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -79,81 +80,58 @@ const Map = () => {
         });
       };
 
+      // if user clicks on the map
       mapInstance.on("click", (e) => {
         const features = mapInstance.queryRenderedFeatures(e.point, {
-          layers: ["musicNotes"],
+          layers: ["musicNotePins"],
         });
 
+        const tempSourceId = "tempMusicNote";
+        const tempLayerId = "tempMusicNoteLayer";
+
+        // if user clicks on the music note
         if (features.length > 0) {
-          const feature = features[0];
-          const properties = feature.properties;
-
-          const popupContent = `
-                        <h3>${properties["Program Name"]}</h3>
-                        <p>Address: ${properties["Street Address 1"]}, ${properties["City"]}, ${properties["State"]} ${properties["Zip"]}</p>
-                        <p>Phone: ${properties["Phone"]}</p>
-                    `;
-
-          new maplibregl.Popup()
-            .setLngLat(feature.geometry.coordinates)
-            .setHTML(popupContent)
-            .addTo(mapInstance);
+          if (mapInstance.getLayer(tempLayerId)) {
+            mapInstance.removeLayer(tempLayerId);
+            mapInstance.removeSource(tempSourceId);
+          }
+          setShowSongPostSidebar(true);
+          setShowAddSongSidebar(false);
+          console.log("Music note clicked");
         } else {
+          // if user clicks on an empty space
           const { lng, lat } = e.lngLat;
-          const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleMapsApiKey}`;
 
-          axios
-            .get(url)
-            .then((response) => {
-              const results = response.data.results;
-              if (results && results.length > 0) {
-                const postalCodeComponent = results[0].address_components.find(
-                  (component) => component.types.includes("postal_code")
-                );
-                const postalCode = postalCodeComponent
-                  ? postalCodeComponent.short_name
-                  : "No zipcode found";
-                const backendUrl = `http://localhost:8800/api/reports/${postalCode}`;
+          if (mapInstance.getLayer(tempLayerId)) {
+            mapInstance.removeLayer(tempLayerId);
+            mapInstance.removeSource(tempSourceId);
+          }
 
-                axios
-                  .get(backendUrl)
-                  .then((backendResponse) => {
-                    const positiveCaseNum = backendResponse.data.length;
-                    const description = `
-                    <div class="custom-popup">
-                    <h1>${positiveCaseNum} cases found in zipcode ${postalCode}</h1>
-                    <button class="report-positive-btn" onclick="openSidebar('${postalCode}')">Log a Positive Case</button>
-                </div>
-            `;
+          mapInstance.addSource(tempSourceId, {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [lng, lat],
+              },
+            },
+          });
 
-                    new maplibregl.Popup()
-                      .setLngLat([lng, lat])
-                      .setHTML(description)
-                      .addTo(mapInstance);
-                  })
-                  .catch((backendError) => {
-                    console.error(
-                      "Error fetching data from backend:",
-                      backendError
-                    );
-                    const description = `
-                                            <div class="custom-popup">
-                                                <h1>0 cases found in zipcode ${postalCode}</h1>
-                                                <button class="report-positive-btn" onclick="openSidebar('${postalCode}')">Log a Positive Case</button>
-                                            </div>`;
+          mapInstance.addLayer({
+            id: tempLayerId,
+            type: "symbol",
+            source: tempSourceId,
+            layout: {
+              "icon-image": "musicNote",
+              "icon-allow-overlap": true,
+              "icon-size": 1,
+            },
+          });
 
-                    new maplibregl.Popup()
-                      .setLngLat([lng, lat])
-                      .setHTML(description)
-                      .addTo(mapInstance);
-                  });
-              } else {
-                console.error("No results found for the provided coordinates");
-              }
-            })
-            .catch((error) =>
-              console.error("Error fetching the address:", error)
-            );
+          // Pulls up add song sidebar
+          setShowAddSongSidebar(true);
+          setShowSongPostSidebar(false);
         }
       });
     });
@@ -167,7 +145,7 @@ const Map = () => {
     // Function to open the sidebar
     window.openSidebar = (postalCode) => {
       setSidebarPostalCode(postalCode);
-      setShowSidebar(true);
+      setShowAddSongSidebar(true);
     };
 
     return () => {
@@ -182,7 +160,6 @@ const Map = () => {
 
     // Create JSON object with the selected drug type, notes, zip code, and reportedAt timestamp
     const reportData = {
-      drugType: drugType,
       notes: notes,
       zipCode: sidebarPostalCode,
       reportedAt: new Date().toISOString(),
@@ -194,9 +171,8 @@ const Map = () => {
       .then((response) => {
         console.log("Report submitted successfully:", response.data);
         // Optionally, you can reset the form fields or close the sidebar after successful submission
-        setDrugType("");
         setNotes("");
-        setShowSidebar(false);
+        setShowAddSongSidebar(false);
       })
       .catch((error) => {
         console.error("Error submitting report:", error);
@@ -211,7 +187,16 @@ const Map = () => {
         ref={mapContainer}
         style={{ position: "absolute", width: "100%", height: "100%" }}
       />
-      {showSidebar && <SideBar closeSidebar={() => setShowSidebar(false)} />}
+      {showAddSongSidebar && (
+        <AddSongSideBar
+          closeAddSongSidebar={() => setShowAddSongSidebar(false)}
+        />
+      )}
+      {showSongPostSidebar && (
+        <SongPostSideBar
+          closeSongPostSidebar={() => setShowSongPostSidebar(false)}
+        />
+      )}
     </>
   );
 };

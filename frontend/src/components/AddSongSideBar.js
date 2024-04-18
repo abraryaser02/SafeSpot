@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../styles/sidebar.css"; // Assume styles are moved to this CSS file
+import "../styles/sidebar.css";
 
-const SideBar = ({ closeSidebar }) => {
+const AddSongSideBar = ({ closeAddSongSidebar }) => {
   const [song, setSong] = useState("");
   const [description, setDescription] = useState("");
 
@@ -15,7 +15,7 @@ const SideBar = ({ closeSidebar }) => {
   return (
     <aside className="overlay overlay--add">
       <div className="action-button-container">
-        <button onClick={closeSidebar} position="right">
+        <button onClick={closeAddSongSidebar} position="right">
           close add overlay
         </button>
       </div>
@@ -46,4 +46,4 @@ const SideBar = ({ closeSidebar }) => {
   );
 };
 
-export default SideBar;
+export default AddSongSideBar;
