@@ -8,8 +8,8 @@ import "../styles/sidebar.css";
 import "../styles/map.css";
 import axios from "axios";
 
-import GeoJSONData from "../data/output.geojson";
-import markerImage from "../data/marker.png";
+import postData from "../data/posts.geojson";
+import musicNote from "../assets/musicnote.png";
 import heatmapData from "../data/heatmap.geojson";
 
 const maptilerApiKey = "UHRJl9L3oK7bh3QT6De6";
@@ -59,26 +59,27 @@ const Map = () => {
       mapInstance.keyboard.enable();
 
       const image = new Image();
-      image.src = markerImage;
+      image.src = musicNote;
       image.onload = () => {
-        mapInstance.addImage("marker", image);
+        mapInstance.addImage("musicNote", image);
+
+        mapInstance.addSource("musicNotes", {
+          type: "geojson",
+          data: postData,
+        });
+
+        mapInstance.addLayer({
+          id: "musicNotePins",
+          type: "symbol",
+          source: "musicNotes",
+          layout: {
+            "icon-image": "musicNote",
+            "icon-allow-overlap": true,
+            "icon-size": 1,
+          },
+        });
+        console.log("Image loaded!");
       };
-
-      mapInstance.addSource("markers", {
-        type: "geojson",
-        data: GeoJSONData,
-      });
-
-      mapInstance.addLayer({
-        id: "markers",
-        type: "symbol",
-        source: "markers",
-        layout: {
-          "icon-image": "marker",
-          "icon-allow-overlap": true,
-          "icon-size": 0.07,
-        },
-      });
 
       // Add heatmap layer
       mapInstance.addSource("heatmap", {
