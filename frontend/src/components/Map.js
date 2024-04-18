@@ -59,11 +59,16 @@ const Map = () => {
       mapInstance.addControl(gc);
       mapInstance.keyboard.enable();
 
-      const image = new Image();
-      image.src = musicNote;
-      image.onload = () => {
-        mapInstance.addImage("musicNote", image);
-        mapInstance.addImage("selectedMusicNote", image);
+      const selectedNote = new Image();
+      selectedNote.src = selectedMusicNote; // Ensure this is a different image file for the selected state
+      selectedNote.onload = () => {
+        mapInstance.addImage("selectedMusicNote", selectedNote);
+      };
+
+      const regularNote = new Image();
+      regularNote.src = musicNote;
+      regularNote.onload = () => {
+        mapInstance.addImage("musicNote", regularNote);
 
         mapInstance.addSource("musicNotes", {
           type: "geojson",
