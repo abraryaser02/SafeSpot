@@ -7,71 +7,66 @@ const AddSongSideBar = ({ closeAddSongSidebar }) => {
   const [tracks, setTracks] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [accessToken, setAccessToken] = useState('');
-  const CLIENT_ID = "cd433caa648d451aa7bbdccaea7658a6";
-  const CLIENT_SECRET = "5069acac77184a78a302939392c4d9ec";
+  
+  const SPOTIFY_CLIENT_ID = "cd433caa648d451aa7bbdccaea7658a6";
+  const SPOTIFY_CLIENT_SECRET = "5069acac77184a78a302939392c4d9ec";
 
   useEffect(() => {
-    // Fetch access token when component mounts
     fetchAccessToken();
   }, []);
 
-  const selectSong = (song) => {
-    setSelectedSong(song);
-    // You can perform additional actions here if needed
-  };
-
   const fetchAccessToken = async () => {
     try {
-      // API request to fetch access token
       const authParameters = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: 'grant_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET
+        body: `grant_type=client_credentials&client_id=${SPOTIFY_CLIENT_ID}&client_secret=${SPOTIFY_CLIENT_SECRET}`
       };
 
       const response = await fetch('https://accounts.spotify.com/api/token', authParameters);
       const data = await response.json();
-
-      // Set the fetched access token in state
       setAccessToken(data.access_token);
     } catch (error) {
       console.error('Error fetching access token:', error);
     }
   };
 
-  async function search() {
-    console.log("Search for: " + searchInput);
+  const selectSong = (songId) => {
+    setSelectedSong(songId);
+    // You can perform additional actions here if needed
+  };
 
-    // Get request using search to get Artist ID
-    var searchParameters = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + accessToken
-      }
-    }
-    console.log("Search Parameters: ", searchParameters);
+  async function search() {
     try {
-      var response = await fetch('https://api.spotify.com/v1/search?q=' + searchInput + '&type=track&market=US&limit=5', searchParameters);
-      var data = await response.json();
-      console.log(data);
-      var extractedTracks = data.tracks.items.map(item => {
-        return {
-          id: item.id,
-          name: item.name,
-          artist: item.artists[0].name,
-          album: item.album.name,
-          preview_url: item.preview_url, // Example, you can store other relevant data as well
-          image_url: item.album.images[0].url
-        };
+      const response = await fetch(`https://api.spotify.com/v1/search?q=${searchInput}&type=track&market=US&limit=5`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
       });
+      const data = await response.json();
+      console.log(data);
+      const extractedTracks = data.tracks.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        artist: item.artists[0].name,
+        album: item.album.name,
+        preview_url: item.preview_url,
+        image_url: item.album.images[0].url
+      }));
       setTracks(extractedTracks);
     } catch (error) {
       console.error('Error searching for tracks:', error);
     }
   }
+
+  const addMoment = () => {
+    console.log("Add Moment:", { selectedSong, description });
+    setDescription("");
+  };
 
   return (
     <aside className="overlay overlay--add">
@@ -105,9 +100,10 @@ const AddSongSideBar = ({ closeAddSongSidebar }) => {
                 </InputGroup>
               </Container>
               <Row className="mx-2">
-                {tracks.map((song, i) =>
-                  (selectedSong === null || selectedSong === song) && (
-                    <Row key={i} className="row-cols-1 mb-3" onClick={() => selectSong(song)}>
+                {tracks
+                  .filter(song => selectedSong === null || selectedSong === song.id)
+                  .map((song, i) => (
+                    <Row key={i} className="row-cols-1 mb-3" onClick={() => selectSong(song.id)}>
                       <Card>
                         <Row noGutters>
                           <Col xs={3} className="d-flex align-items-center">
@@ -122,8 +118,8 @@ const AddSongSideBar = ({ closeAddSongSidebar }) => {
                         </Row>
                       </Card>
                     </Row>
-                  )
-                )}
+                  ))
+                }
               </Row>
             </div>
             <div className="overlay__section-text">
@@ -133,6 +129,7 @@ const AddSongSideBar = ({ closeAddSongSidebar }) => {
                 onChange={e => setDescription(e.target.value)}
                 className="subform"
               ></textarea>
+              <button onClick={addMoment}>Add</button>
             </div>
           </section>
         </div>

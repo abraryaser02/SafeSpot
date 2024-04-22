@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "id": 1,
-        "song": "Snooze by SZA",
+        "song": "4iZ4pt7kvcaH6Yo8UoZ4s2",
         "description": "Really awesome song that my friend showed me last month and we listened to it a lot together."
       },
       "geometry": { "type": "Point", "coordinates": [-117.71931, 34.09661] }
@@ -14,7 +14,7 @@
       "type": "Feature",
       "properties": {
         "id": 2,
-        "song": "Love Story by Taylor Swift",
+        "song": "3CeCwYWvdfXbZLXFhBrbnf",
         "description": "I listened to this song walking to the Hive."
       },
       "geometry": { "type": "Point", "coordinates": [-117.71931, 34.10661] }
@@ -23,7 +23,7 @@
       "type": "Feature",
       "properties": {
         "id": 3,
-        "song": "Good Days by SZA",
+        "song": "4PMqSO5qyjpvzhlLI5GnID",
         "description": "I listened to this song everyday freshman year."
       },
       "geometry": { "type": "Point", "coordinates": [-117.72531, 34.09661] }

@@ -13,7 +13,7 @@ const SongPostSideBar = ({ closeSongPostSidebar, song, notes }) => {
         <div className="overlay__content">
           <section>
             <div className="overlay__section-text">Songs in this location:</div>
-            <SongPost song={song} description={notes} />
+            <SongPost songID ={song} description={notes} />
           </section>
         </div>
       </div>
