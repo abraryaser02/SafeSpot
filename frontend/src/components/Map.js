@@ -17,7 +17,7 @@ import SongPostSideBar from "./SongPostSideBar";
 const maptilerApiKey = "UHRJl9L3oK7bh3QT6De6";
 const maptilerMapReference = "99cf5fa2-3c1e-4adf-a1c1-fd879b417597";
 
-const Map = (accessToken) => {
+const Map = () => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const initialState = {
@@ -203,12 +203,12 @@ const Map = (accessToken) => {
       />
       {showAddSongSidebar && (
         <AddSongSideBar
-          closeAddSongSidebar={() => setShowAddSongSidebar(false)} accessToken={accessToken}
+          closeAddSongSidebar={() => setShowAddSongSidebar(false)}
         />
       )}
       {showSongPostSidebar && (
         <SongPostSideBar
-          closeSongPostSidebar={() => setShowSongPostSidebar(false)} accessToken={accessToken}
+          closeSongPostSidebar={() => setShowSongPostSidebar(false)}
           song={song}
           notes={notes}
         />
